@@ -1,19 +1,22 @@
-const store = require('store')
+/**
+ * @param {Store}  storage
+ * @param {string} dataKey
+ */
+const makeWatchers = ({ store, fields }, dataKey) => Object.keys(fields).reduce((acc, key) => ({
+  [`${dataKey}.${key}`]: {
+    handler: value => store.set(key, value)
+  },
+  ...acc
+}), {})
 
-const makeWatchers = (storage, dataKey) => Object.keys(storage).reduce((acc, key) => {
-  const vueKey = `${dataKey}.${key}`
-  // allow .bind
-  const handler = function handler (value) {
-    store.set(key, value)
-    console.log(`${vueKey} watcher executed...`)
-  }
-
-  return Object.assign({ [vueKey]: { handler } }, acc)
-}, {})
-
+/**
+ * @param {Store}  storage
+ * @param {String} dataKey
+ */
 module.exports = (storage, dataKey) => ({
   data: () => ({
-    [dataKey]: storage
+    [dataKey]: storage.fields
   }),
+
   watch: makeWatchers(storage, dataKey)
 })

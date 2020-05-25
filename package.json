@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/ropbla9/vue-reactivestorage#readme",
   "dependencies": {
-    "store": "^1.3.20"
+    "store": "^2.0.12"
   },
   "devDependencies": {
     "buble": "^0.15.2",
