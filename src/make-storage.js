@@ -1,12 +1,26 @@
-const store = require('store')
+const engine = require('store/src/store-engine')
 
-module.exports = schema => {
-  // console.log(schema)
-  const local = store.getAll()
-  const storage = Object.keys(schema).reduce((acc, key) => {
-    const value = local[key] || schema[key]
-    return Object.assign({ [key]: value }, acc)
-  }, {})
-  // console.log(storage)
-  return storage
+/**
+ * @typedef Store
+ * @property {StoreJsAPI} store
+ * @property {Object}     fields
+ */
+
+/**
+ * @param {String} storage
+ */
+const getStorage = (storage) => [ require(`store/storages/${storage}Storage`) ]
+
+/**
+ * @param {Objcet} schema
+ * @param {'local' | 'session'} storage
+ * @returns {Store}
+ */
+module.exports = (schema, storage) => {
+  const store = engine.createStore(getStorage(storage), [])
+  const fields = Object.entries(schema).reduce((acc, [ key, value ]) => ({
+    [key]: store.get(key) || value, ...acc
+  }), {})
+
+  return { store, fields }
 }
